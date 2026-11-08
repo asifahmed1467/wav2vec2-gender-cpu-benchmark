@@ -1,0 +1,10 @@
+models/*
+results/*
+clips/*
+!models/.gitkeep
+!results/.gitkeep
+!clips/.gitkeep
+*.bak
+*.zip
+__pycache__/
+*.pyc
