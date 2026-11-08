@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.13)
+project(hb_audio CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(ORT_DIR "/opt/ort" CACHE PATH "ONNX Runtime (CPU) unpacked release")
+add_executable(hb_audio main.cpp)
+target_include_directories(hb_audio PRIVATE ${ORT_DIR}/include)
+target_link_libraries(hb_audio PRIVATE ${ORT_DIR}/lib/libonnxruntime.so)
+set_target_properties(hb_audio PROPERTIES BUILD_RPATH ${ORT_DIR}/lib INSTALL_RPATH ${ORT_DIR}/lib)
