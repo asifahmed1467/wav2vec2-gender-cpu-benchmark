@@ -1,0 +1,28 @@
+services:
+  gender:
+    build: .
+    image: gender-bench
+    container_name: gender-bench
+    restart: unless-stopped
+    environment:
+      - HB_THREADS=max     # max = every logical thread; a number (e.g. 6) or empty = physical cores only
+    ports:
+      - "8095:8000"      # full page with the Run button (private, only you)
+      - "8096:8001"      # read-only live view (safe to share)
+    volumes:
+      - gender-hfcache:/root/.cache/huggingface   # model weights (downloaded once)
+      - ./clips:/clips:ro                         # your labelled clips: labels.csv + audio files
+      - ./models:/models                          # converted / quantised models, saved here as normal files
+      - ./results:/results                        # gender_results.md and gender_sweep.csv are written while it runs
+  # Public link for your supervisor, started only with:  docker compose --profile live up -d
+  # It exposes ONLY the read-only view (port 8001). The link is printed by:  docker logs gender-tunnel
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: gender-tunnel
+    profiles: ["live"]
+    command: tunnel --no-autoupdate --url http://gender:8001
+    depends_on:
+      - gender
+    restart: unless-stopped
+volumes:
+  gender-hfcache:
